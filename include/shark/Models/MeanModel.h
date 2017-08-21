@@ -36,14 +36,11 @@
 #define SHARK_MODELS_MEANMODEL_H
 
 namespace shark {
-
 /// \brief Calculates the weighted mean of a set of models
 template<class ModelType>
-class MeanModel : public AbstractModel<typename ModelType::InputType, typename ModelType::OutputType>
+class MeanModel : public ModelType::ModelBaseType
 {
 private:
-	typedef AbstractModel<typename ModelType::InputType, typename ModelType::OutputType> base_type;
-
 	template<class InputBatch>
 	void doEval(InputBatch const& patterns, RealMatrix& outputs)const{
 		m_models[0].eval(patterns,outputs);
@@ -76,30 +73,33 @@ private:
 		}
 	}
 public:
-	
+	typedef typename ModelType::ModelBaseType ModelBaseType;
+	typedef typename ModelBaseType::BatchInputType BatchInputType;
+	typedef typename ModelBaseType::BatchOutputType BatchOutputType;
+	typedef typename ModelBaseType::ParameterVectorType ParameterVectorType;
 	/// Constructor
 	MeanModel():m_weightSum(0){}
 	
 	std::string name() const
 	{ return "MeanModel"; }
 
-	using base_type::eval;
+	using ModelBaseType::eval;
 	void eval(typename base_type::BatchInputType const& patterns, typename base_type::BatchOutputType& outputs)const{
 		doEval(patterns,outputs);
 	}
 	
-	void eval(typename base_type::BatchInputType const& patterns, typename base_type::BatchOutputType& outputs, State& state)const{
+	void eval(BatchInputType const& patterns, BatchOutputType& outputs, State& state)const{
 		eval(patterns,outputs);
 	}
 
 
 	/// This model does not have any parameters.
-	RealVector parameterVector() const {
-		return RealVector();
+	ParameterVectorType parameterVector() const {
+		return {};
 	}
 
 	/// This model does not have any parameters
-	void setParameterVector(const RealVector& param) {
+	void setParameterVector(ParameterVectorType const& param) {
 		SHARK_ASSERT(param.size() == 0);
 	}
 	void read(InArchive& archive){
@@ -128,7 +128,7 @@ public:
 		SHARK_RUNTIME_CHECK(weight > 0, "Weights must be positive");
 		m_models.push_back(model);
 		m_weight.push_back(weight);
-		m_weightSum+=weight;
+		m_weightSum += weight;
 	}
 	
 	ModelType const& getModel(std::size_t index){
@@ -152,13 +152,13 @@ public:
 	}
 
 protected:
-	/// collection of models.
+	/// \brief collection of models.
 	std::vector<ModelType> m_models;
 
-	/// Weight of the mean.
-	std::vector<double> m_weight;
+	/// \brief Weight of the mean.
+	RealVector m_weight;
 
-	/// Total sum of weights.
+	/// \brief Total sum of weights.
 	double m_weightSum;
 };
 
