@@ -73,7 +73,7 @@ class RFTrainer;
 
 template<>
 class RFTrainer<unsigned int>
-: public AbstractTrainer<RFClassifier<unsigned int> >, public IParameterizable
+: public AbstractTrainer<RFClassifier<unsigned int> >, public IParameterizable<RealVector>
 {
 public:
 	/// Construct and compute feature importances when training or not
@@ -118,7 +118,7 @@ public:
 	void epsilon(double distance) {m_epsilon = distance;}
 	
 	/// Return the parameter vector.
-	RealVector parameterVector() const{RealVector();}
+	RealVector parameterVector() const{return RealVector();}
 
 	/// Set the parameter vector.
 	void setParameterVector(RealVector const& newParameters){
@@ -189,7 +189,7 @@ private:
 
 template<>
 class RFTrainer<RealVector>
-: public AbstractTrainer<RFClassifier<RealVector> >, public IParameterizable
+: public AbstractTrainer<RFClassifier<RealVector> >, public IParameterizable<RealVector>
 {
 public:
 	/// Construct and compute feature importances when training or not
@@ -234,7 +234,7 @@ public:
 	void epsilon(double distance) {m_epsilon = distance;}
 	
 	/// Return the parameter vector.
-	RealVector parameterVector() const{RealVector();}
+	RealVector parameterVector() const{return RealVector();}
 
 	/// Set the parameter vector.
 	void setParameterVector(RealVector const& newParameters){

@@ -84,7 +84,7 @@ public:
 	{ return "MeanModel"; }
 
 	using ModelBaseType::eval;
-	void eval(typename base_type::BatchInputType const& patterns, typename base_type::BatchOutputType& outputs)const{
+	void eval(BatchInputType const& patterns, BatchOutputType& outputs)const{
 		doEval(patterns,outputs);
 	}
 	
